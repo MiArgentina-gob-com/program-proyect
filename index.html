@@ -3,7 +3,7 @@
 <head>
   <link rel="icon" href= "Logo.ico">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Panel de Control - Configuración</title>
   <style>
     * {
@@ -1257,6 +1257,11 @@
       </div>
 
       <div class="form-field">
+        <label>Lugar de Nacimiento</label>
+        <input type="text" id="lugarNacimiento" placeholder="Ingrese su lugar de nacimiento">
+      </div>
+
+      <div class="form-field">
         <label>Sexo</label>
         <div class="radio-group">
           <label><input type="radio" name="sexo" value="M"> M</label>
@@ -1502,69 +1507,68 @@
       document.getElementById('vistaCargando').style.display = 'none';
     }
 
-    /* FLIP CARD CON SOPORTE OPTIMIZADO PARA WEBKIT/IOS */
+    /* FLIP CARD CON SOPORTE OPTIMIZADO PARA WEBKIT/IOS Y ANDROID */
     let isFliped = false;
     let flipListenerAdded = false;
 
     function initDniFlip() {
-  const dniCard = document.getElementById('dni-card');
-  if (!dniCard || flipListenerAdded) return;
+      const dniCard = document.getElementById('dni-card');
+      if (!dniCard || flipListenerAdded) return;
 
-  let startX = 0;
-  let startY = 0;
-  let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let isDragging = false;
 
-  // Inicio de toque
-  dniCard.addEventListener('touchstart', function(e) {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    isDragging = false;
-  }, { passive: true });
+      // Inicio de toque
+      dniCard.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = false;
+      }, { passive: true });
 
-  // Detección de arrastre durante el movimiento del dedo
-  dniCard.addEventListener('touchmove', function(e) {
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-    const diffX = Math.abs(currentX - startX);
-    const diffY = Math.abs(currentY - startY);
+      // Detección de arrastre durante el movimiento del dedo
+      dniCard.addEventListener('touchmove', function(e) {
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const diffX = Math.abs(currentX - startX);
+        const diffY = Math.abs(currentY - startY);
 
-    // Si se desplaza más de 10px horizontalmente, se considera un arrastre
-    if (diffX > 10 && diffX > diffY) {
-      isDragging = true;
+        // Si se desplaza más de 10px, se considera un arrastre
+        if (diffX > 10 || diffY > 10) {
+          isDragging = true;
+        }
+      }, { passive: true });
+
+      // Fin de toque
+      dniCard.addEventListener('touchend', function(e) {
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const diffX = endX - startX;
+        const diffY = Math.abs(endY - startY);
+
+        // 1. Si hubo un gesto de arrastre horizontal suficiente (Swipe)
+        if (Math.abs(diffX) > 30 && diffY < 50) {
+          e.preventDefault();
+          flipCard();
+          return;
+        }
+
+        // 2. Si fue un toque rápido/presionado directo (Tap)
+        if (!isDragging && Math.abs(diffX) < 10 && diffY < 10) {
+          e.preventDefault();
+          flipCard();
+        }
+      });
+
+      // Evento para escritorio / clic con mouse
+      dniCard.addEventListener('click', function(e) {
+        if (e.pointerType === 'mouse') {
+          flipCard();
+        }
+      });
+
+      flipListenerAdded = true;
     }
-  }, { passive: true });
-
-  // Fin de toque
-  dniCard.addEventListener('touchend', function(e) {
-    const endX = e.changedTouches[0].clientX;
-    const endY = e.changedTouches[0].clientY;
-    const diffX = endX - startX;
-    const diffY = Math.abs(endY - startY);
-
-    // 1. Si hubo un gesto de arrastre horizontal suficiente (Swipe)
-    if (Math.abs(diffX) > 30 && diffY < 50) {
-      e.preventDefault();
-      flipCard();
-      return;
-    }
-
-    // 2. Si fue un toque rápido/presionado directo (Tap/Click)
-    if (!isDragging && Math.abs(diffX) < 0 && diffY < 0) {
-      e.preventDefault();
-      flipCard();
-    }
-  });
-
-  // Evento para escritorio / clic con mouse
-  dniCard.addEventListener('click', function(e) {
-    if (e.pointerType === 'mouse') {
-      flipCard();
-    }
-  });
-
-  flipListenerAdded = true;
-}
-
 
     function flipCard() {
       const dniCard = document.getElementById('dni-card');
