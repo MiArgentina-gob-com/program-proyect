@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Panel de Control - Configuración</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f2f3f7;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: calc(60px + env(safe-area-inset-top));
+      padding-top: env(safe-area-inset-top);
+      background-color: #362FC1;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 20px;
+      padding-right: 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .topbar .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .topbar .user-profile {
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .topbar-center-mobile {
+      display: none;
+    }
+
+    /* LAYOUT Y SIDEBAR */
+    .layout {
+      display: flex;
+      margin-top: calc(60px + env(safe-area-inset-top));
+      min-height: calc(100vh - (60px + env(safe-area-inset-top)));
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #ffffff;
+      border-right: 1px solid #e0e0e0;
+      padding-top: 15px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar a {
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #362FC1;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #362FC1;
+      color: white;
+      border-radius: 0 20px 20px 0;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .content {
+      flex: 1;
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome-header {
+      margin-bottom: 25px;
+    }
+
+    .welcome-header h1 {
+      font-size: 2rem;
+      color: #362FC1;
+      margin-bottom: 5px;
+    }
+
+    .welcome-header p {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    /* TARJETA SUPERIOR DE TURNOS */
+    .card-turnos-top {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .card-turnos-top .ticket-svg-icon {
+      width: 48px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
+    .card-turnos-top .turnos-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .card-turnos-top .turnos-text {
+      font-size: 1.15rem;
+      color: #2b2b2b;
+      font-weight: 400;
+      letter-spacing: -0.2px;
+    }
+
+    .card-turnos-top .turnos-text strong {
+      font-weight: 700;
+    }
+
+    .btn-turno {
+      background-color: #362FC1;
+      color: white;
+      border: none;
+      padding: 7px 20px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-turno:hover {
+      background-color: #2a239c;
+    }
+
+    /* BANNER VERDE */
+    .banner-green {
+      background-color: #d4f0e2;
+      color: #1a4d36;
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+
+    .banner-green .banner-svg-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
+
+    /* CASILLAS */
+    .section-title {
+      font-size: 1.3rem;
+      color: #111;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .grid-casillas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .casilla-item {
+      background-color: white;
+      border-radius: 20px;
+      padding: 24px 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      border: 1px solid #eaeaea;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .casilla-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .casilla-svg-icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .casilla-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2b2b2b;
+    }
+
+    /* SECCIÓN DOCUMENTOS */
+    .documentos-view {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #f8f9fc;
+      min-height: 100%;
+    }
+
+    .documentos-header {
+      background-color: #2c29bc;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .doc-header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-back, .btn-refresh {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .doc-title {
+      font-size: 1.25rem;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .documentos-body {
+      padding: 20px 15px;
+    }
+
+    .card-doc-accordion {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+
+    .card-doc-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-doc-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-wrapper-doc {
+      padding-right: 16px;
+      border-right: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+    }
+
+    .doc-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.3;
+    }
+
+    .chevron-icon {
+      color: #666;
+      font-size: 0.85rem;
+      transition: transform 0.3s ease;
+    }
+
+    .card-doc-accordion.open .chevron-icon {
+      transform: rotate(180deg);
+    }
+
+    .card-doc-content {
+      display: none;
+      flex-direction: column;
+    }
+
+    .card-doc-accordion.open .card-doc-content {
+      display: flex;
+    }
+
+    .doc-section {
+      padding: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-ver-dni {
+      width: 100%;
+      background-color: #362FC1;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 35px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-ver-dni:hover {
+      background-color: #2a239c;
+    }
+
+    .doc-meta-title {
+      font-size: 0.88rem;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .doc-meta-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #4b8cd8;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-info-text {
+      font-size: 0.92rem;
+      color: #4a4a4a;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .btn-solicitar-dni {
+      width: 100%;
+      background-color: transparent;
+      color: #362FC1;
+      border: 1.5px solid #362FC1;
+      padding: 14px;
+      border-radius: 35px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-solicitar-dni:hover {
+      background-color: rgba(54, 47, 193, 0.05);
+    }
+
+    .doc-action-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-top: 1px solid #e2e8f0;
+      cursor: pointer;
+    }
+
+    .icon-info-circle {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #362FC1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #362FC1;
+      font-weight: 700;
+      font-family: serif;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .action-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #362FC1;
+    }
+
+    /* MODAL GENERAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .form-field { margin-bottom: 18px; }
+    .form-field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 4px;
+    }
+    .form-field input[type="text"],
+    .form-field input[type="date"] {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid #4a90e2;
+      padding: 6px 0;
+      font-size: 16px; /* Evita auto-zoom en iOS */
+      outline: none;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .radio-group { display: flex; gap: 20px; font-size: 0.9rem; }
+
+    .img-preview {
+      margin-top: 10px;
+      max-width: 150px;
+      max-height: 100px;
+      display: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
+    .btn {
+      background-color: #362FC1;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      flex: 1;
+    }
+    .btn-secondary { background-color: #e0e0e0; color: #333; }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: calc(60px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 800;
+    }
+
+    /* PÁGINA EN BLANCO PARA VER DNI CON ENCABEZADO AZUL */
+    .vista-blanca-full {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #f2f3f8;
+      z-index: 2000;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    }
+
+    .vista-blanca-full .documentos-header {
+      border-radius: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding-top: calc(16px + env(safe-area-inset-top));
+    }
+
+    /* VISTA CARGANDO GENERICA */
+    .vista-loading-full {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ffffff;
+      z-index: 3000;
+      flex-direction: column;
+    }
+
+    .loading-header {
+      padding: calc(16px + env(safe-area-inset-top)) 20px 16px 20px;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+    }
+
+    .loading-header .btn-back-loading {
+      background: none;
+      border: none;
+      color: #362FC1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #e0e0e0;
+      border-top: 5px solid #362FC1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      -webkit-animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+
+    /* CONTENEDOR TARJETA */
+    .app-dni-card-wrapper {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      max-width: 400px;
+      margin: 15px auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-dni-card-body {
+      padding: 15px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .dni-holder-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+      text-align: left;
+      align-self: flex-start;
+      padding-left: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .update-timestamp {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #333333;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .app-dni-actions {
+      display: flex;
+      border-top: 1px solid #e8e8e8;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .app-action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 10px;
+      background: transparent;
+      border: none;
+      color: #1a1a1a;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .app-action-btn + .app-action-btn {
+      border-left: 1px solid #e8e8e8;
+    }
+
+    .app-action-btn.danger {
+      color: #2b2b2b;
+    }
+
+    .app-dni-qr-accordion {
+      border-top: 1px solid #e8e8e8;
+      width: 100%;
+    }
+
+    .app-qr-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      color: #1a1a1a;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .app-qr-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ===== DNI CARD (OPTIMIZADO iOS WEBKIT) ===== */
+    :root { --dni-size-multiplier: 1; }
+
+    .dni-container {
+      padding: 0;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 14px;
+      width: 100%;
+    }
+
+    #dni-card-container {
+      width: calc(385px * var(--dni-size-multiplier));
+      height: calc(250px * var(--dni-size-multiplier));
+     perspective: 1000px;
+     -webkit-perspective: 1000px;
+    }
+
+    #dni-card {
+      width: 100%; 
+     height: 100%;
+      border-radius: 8px;
+      position: relative;
+      /* Transición explícita con el prefijo WebKit */
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+     -webkit-transition: -webkit-transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+     transform-style: preserve-3d;
+     -webkit-transform-style: preserve-3d;
+     box-shadow: 0px 0px 10px rgba(0,0,0,.25);
+      cursor: pointer;
+     user-select: none;
+     -webkit-user-select: none;
+      touch-action: manipulation;
+    } 
+
+    .card__face {
+      position: absolute;
+     width: 100%; 
+     height: 100%;
+      -webkit-backface-visibility: hidden;
+     backface-visibility: hidden;
+     border-radius: 8px;
+     background-position: center;
+      background-repeat: no-repeat;
+     background-size: 100% 100%;
+      /* Fix clave para WebKit: translateZ independiente para cada cara */
+     -webkit-transform-style: preserve-3d;
+     transform-style: preserve-3d;
+    }
+
+    .card__face--front {
+      transform: rotateY(0deg) translateZ(1px);
+     -webkit-transform: rotateY(0deg) translateZ(1px);
+     background-image: url('dni-template.png');
+    }
+
+    .card__face--back {
+      transform: rotateY(180deg) translateZ(1px);
+      -webkit-transform: rotateY(180deg) translateZ(1px);
+      background-image: url('dni-template-back.png');
+    }
+
+    /* Forzar la rotación por GPU en el contenedor padre */
+    #dni-card.is-flipped {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    .dni-param {
+      filter: blur(0.45px);
+      -webkit-filter: blur(0.45px);
+      font-weight: normal;
+      letter-spacing: 0.1px;
+      will-change: transform, filter;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    .dni-item {
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Arial', -apple-system, sans-serif;
+      pointer-events: none;
+      text-transform: uppercase;
+      color: #000;
+      z-index: 2;
+    }
+
+    /* --- POSICIONES ALINEADAS --- */
+    #dni-image {
+      position: absolute;
+      height: calc(142px * var(--dni-size-multiplier));
+      width: calc(113px * var(--dni-size-multiplier));
+      top: calc(48px * var(--dni-size-multiplier));
+      left: calc(12px * var(--dni-size-multiplier));
+      object-fit: cover;
+      filter: blur(0.2px);
+      -webkit-filter: blur(0.2px);
+      z-index: 2;
+    }
+
+    #dni-surname {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(54px * var(--dni-size-multiplier));
+    }
+
+    #dni-name {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(77px * var(--dni-size-multiplier));
+    }
+
+    #dni-sex {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(104px * var(--dni-size-multiplier));
+    }
+
+    #dni-ejemplar {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      right: calc(40px * var(--dni-size-multiplier));
+      top: calc(104px * var(--dni-size-multiplier));
+    }
+
+    #dni-birth {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(130px * var(--dni-size-multiplier));
+      letter-spacing: 0.5px;
+    }
+
+    #dni-issue {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(157px * var(--dni-size-multiplier));
+      letter-spacing: 0.5px;
+    }
+
+    #dni-expiration {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(183px * var(--dni-size-multiplier));
+      letter-spacing: 0.5px;
+    }
+
+    #dni-tramite-num {
+      font-size: calc(9.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(130px * var(--dni-size-multiplier));
+      top: calc(208px * var(--dni-size-multiplier));
+      max-width: calc(100px * var(--dni-size-multiplier));
+      overflow: visible;
+      word-wrap: break-word;
+      letter-spacing: 0.5px;
+    }
+
+    #dni-number {
+      font-size: calc(18px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(15px * var(--dni-size-multiplier));
+      bottom: calc(15px * var(--dni-size-multiplier));
+      filter: blur(0.45px);
+      -webkit-filter: blur(0.45px);
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    #dni-firma {
+      position: absolute;
+      height: calc(30px * var(--dni-size-multiplier));
+      width: calc(90px * var(--dni-size-multiplier));
+      bottom: calc(103px * var(--dni-size-multiplier));
+      left: calc(278px * var(--dni-size-multiplier));
+      object-fit: contain;
+      filter: blur(0.2px);
+      -webkit-filter: blur(0.2px);
+      z-index: 2;
+    }
+
+    #dni-qr {
+      position: absolute;
+      width: calc(140px * var(--dni-size-multiplier));
+      height: calc(40px * var(--dni-size-multiplier));
+      background-color: white;
+      bottom: 15px;
+      right: 15.5px;
+      filter: blur(0.3px);
+      -webkit-filter: blur(0.3px);
+      z-index: 2;
+    }
+
+    #dni-extra-image {
+      position: absolute;
+      height: calc(43px * var(--dni-size-multiplier));
+      width: calc(140px * var(--dni-size-multiplier));
+      bottom: calc(15px * var(--dni-size-multiplier));
+      right: calc(15px * var(--dni-size-multiplier));
+      object-fit: contain;
+      filter: blur(0.2px);
+      -webkit-filter: blur(0.2px);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* --- DORSO --- */
+    #dni-address {
+      font-size: calc(10.5px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(15px * var(--dni-size-multiplier));
+      top: calc(11px * var(--dni-size-multiplier));
+      filter: blur(0.35px);
+      -webkit-filter: blur(0.35px);
+      letter-spacing: -0.65px;
+    }
+
+    #dni-birthplace-back {
+      font-size: calc(10px * var(--dni-size-multiplier));
+      position: absolute;
+      left: calc(118px * var(--dni-size-multiplier));
+      top: calc(45px * var(--dni-size-multiplier));
+      filter: blur(0.35px);
+      -webkit-filter: blur(0.35px);
+      letter-spacing: -0.2px;
+      font-weight: bold;
+    }
+
+    #dni-mrz {
+      font-size: calc(16px * var(--dni-size-multiplier));
+      position: absolute;
+      font-family: 'Courier New', Courier, monospace;
+      width: 100%;
+      left: 0; right: 0;
+      bottom: calc(11px * var(--dni-size-multiplier));
+      filter: blur(0.35px);
+      -webkit-filter: blur(0.35px);
+      line-height: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      white-space: pre-line;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Dots */
+    .dni-dots { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 10px; }
+    .dni-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(44,41,188,0.22); transition: background .3s, transform .3s; }
+    .dni-dot.active { background: #2c29bc; transform: scale(1.3); }
+
+    @media screen and (max-width: 400px) {
+      :root { --dni-size-multiplier: 0.85; }
+    }
+    @media screen and (max-width: 320px) {
+      :root { --dni-size-multiplier: 0.8; }
+    }
+
+    /* ESTILOS MÓVIL Y DISPOSITIVOS IOS */
+    @media (max-width: 768px) {
+      .topbar {
+        justify-content: center;
+        height: calc(55px + env(safe-area-inset-top));
+      }
+
+      .topbar-left {
+        position: absolute;
+        left: 15px;
+      }
+
+      .menu-toggle { display: block; }
+      .topbar .logo, .topbar .user-profile { display: none; }
+
+      .topbar-center-mobile {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+      }
+
+      .layout { margin-top: calc(55px + env(safe-area-inset-top)); }
+
+      .sidebar {
+        position: fixed;
+        top: calc(55px + env(safe-area-inset-top)); left: 0; bottom: 0;
+        z-index: 900;
+        transform: translateX(-100%);
+        -webkit-transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        -webkit-transform: translateX(0);
+      }
+      .overlay.show { display: block; }
+
+      .content {
+        padding: 15px;
+        background-color: #f5f6fa;
+      }
+
+      .welcome-header { display: none; }
+
+      .card-turnos-top {
+        padding: 18px 20px;
+        gap: 16px;
+      }
+
+      .card-turnos-top .turnos-text {
+        font-size: 1rem;
+      }
+
+      .grid-casillas {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+
+      .casilla-item {
+        padding: 14px 4px;
+        border-radius: 14px;
+        gap: 6px;
+      }
+
+      .casilla-svg-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .casilla-title {
+        font-size: 0.72rem;
+      }
+
+      .documentos-header {
+        border-radius: 0;
+        margin: -15px -15px 15px -15px;
+        padding: 18px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+      <div class="logo" onclick="verInicio()">Mi Argentina</div>
+    </div>
+    
+    <div class="topbar-center-mobile" id="topNavUserMobile">¡Hola!</div>
+    
+    <div class="user-profile" id="topNavUser" onclick="abrirModalPerfil()">Mi Perfil ▾</div>
+  </header>
+
+  <div class="layout">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <nav class="sidebar" id="sidebar">
+      <a href="#" id="linkInicio" class="active" onclick="verInicio()">🏠 Inicio</a>
+      <a href="#" onclick="abrirModalPerfil()">👤 Mis datos</a>
+      <a href="#" id="linkDocumentos" onclick="verDocumentos()">📄 Documentos</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">🚗 Vehículos</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">💼 Trabajo</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">💙 Salud</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">💲 Cobros</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">📋 Trámites</a>
+      <a href="#" onclick="abrirCargandoIndefinido()">📅 Turnos</a>
+    </nav>
+
+    <main class="content">
+
+      <div id="vistaInicio">
+        <div class="welcome-header">
+          <h1 id="welcomeUser">¡Hola!</h1>
+          <p>Gestioná trámites, sacá turnos, accedé a tus credenciales e información personalizada.</p>
+        </div>
+
+        <div class="card-turnos-top">
+          <svg class="ticket-svg-icon" viewBox="0 0 48 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 12,4 L 36,4 C 40.4,4 44,7.6 44,12 L 44,20 C 40,20 37,23 37,27 C 37,31 40,34 44,34 L 44,52 C 44,56.4 40.4,60 36,60 L 12,60 C 7.6,60 4,56.4 4,52 L 4,34 C 8,34 11,31 11,27 C 11,23 8,20 4,20 L 4,12 C 4,7.6 7.6,4 12,4 Z" stroke="#362FC1" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <text x="24" y="34" font-family="-apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="bold" fill="#362FC1" text-anchor="middle" dominant-baseline="middle">01</text>
+          </svg>
+          <div class="turnos-content">
+            <span class="turnos-text">No tenés turnos <strong>programados</strong></span>
+            <button class="btn-turno" onclick="abrirCargandoIndefinido()">Sacar turno</button>
+          </div>
+        </div>
+
+        <div class="banner-green">
+          <div>
+            <h2 style="font-size:1.2rem; font-weight:700;">¡Todas tus credenciales están al día!</h2>
+          </div>
+          <svg class="banner-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="10" width="36" height="28" rx="5" stroke="#362FC1" stroke-width="3" fill="none"/>
+            <circle cx="16" cy="21" r="4" stroke="#362FC1" stroke-width="2.5" fill="none"/>
+            <path d="M11 31 C11 27, 13 26, 16 26 C19 26, 21 27, 21 31" stroke="#362FC1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <line x1="26" y1="20" x2="38" y2="20" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+            <line x1="26" y1="27" x2="34" y2="27" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <h2 class="section-title">¿Qué necesitás hoy?</h2>
+        
+        <div class="grid-casillas">
+          <div class="casilla-item" id="casilla1" onclick="verDocumentos()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="10" width="36" height="28" rx="5" stroke="#362FC1" stroke-width="3" fill="none"/>
+              <circle cx="16" cy="21" r="4" stroke="#362FC1" stroke-width="2.5" fill="none"/>
+              <path d="M11 31 C11 27, 13 26, 16 26 C19 26, 21 27, 21 31" stroke="#362FC1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <line x1="26" y1="20" x2="38" y2="20" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+              <line x1="26" y1="27" x2="34" y2="27" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="casilla-title">Documentos</div>
+          </div>
+
+          <div class="casilla-item" id="casilla2" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 12,24 C 14,16 16,14 24,14 C 32,14 34,16 37,24 L 40,24 C 42,24 43,26 43,29 L 43,33 L 5,33 L 5,29 C 5,26 6,24 8,24 Z" stroke="#362FC1" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <circle cx="14" cy="33" r="4" stroke="#362FC1" stroke-width="3" fill="white"/>
+              <circle cx="34" cy="33" r="4" stroke="#362FC1" stroke-width="3" fill="white"/>
+            </svg>
+            <div class="casilla-title">Vehículos</div>
+          </div>
+
+          <div class="casilla-item" id="casilla3" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="16" width="36" height="24" rx="4" stroke="#362FC1" stroke-width="3" fill="none"/>
+              <path d="M18 16 V11 C18 9 19.5 8 21.5 8 H26.5 C28.5 8 30 9 30 11 V16" stroke="#362FC1" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <path d="M6 24 H18 V26 C18 28 20 29 24 29 C28 29 30 28 30 26 V24 H42" stroke="#362FC1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <div class="casilla-title">Trabajo</div>
+          </div>
+
+          <div class="casilla-item" id="casilla4" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 39 C24 39 8 28 8 17 C8 11.5 12.5 7 18 7 C21.2 7 23.1 8.8 24 10 C24.9 8.8 26.8 7 30 7 C35.5 7 40 11.5 40 17 C40 28 24 39 24 39 Z" stroke="#362FC1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            <div class="casilla-title">Salud</div>
+          </div>
+
+          <div class="casilla-item" id="casilla5" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="12" width="36" height="24" rx="5" stroke="#362FC1" stroke-width="3" fill="none"/>
+              <text x="24" y="26" font-family="-apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="bold" fill="#362FC1" text-anchor="middle" dominant-baseline="middle">$</text>
+            </svg>
+            <div class="casilla-title">Cobros</div>
+          </div>
+
+          <div class="casilla-item" id="casilla6" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 10 C10 7.8 11.8 6 14 6 H28 L38 16 V38 C38 40.2 36.2 42 34 42 H14 C11.8 42 10 40.2 10 38 V10 Z" stroke="#362FC1" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <path d="M28 6 V16 H38" stroke="#362FC1" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <line x1="18" y1="24" x2="30" y2="24" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+              <line x1="18" y1="31" x2="30" y2="31" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="casilla-title">Trámites</div>
+          </div>
+
+          <div class="casilla-item" id="casilla7" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 12,4 L 36,4 C 40,4 43,7 43,11 L 43,16 C 39,16 36,19 36,24 C 36,29 39,32 43,32 L 43,37 C 43,41 40,44 36,44 L 12,44 C 8,44 5,41 5,37 L 5,32 C 9,32 12,29 12,24 C 12,19 9,16 5,16 L 5,11 C 5,7 8,4 12,4 Z" stroke="#362FC1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <text x="24" y="25" font-family="-apple-system, 'Segoe UI', sans-serif" font-size="12" font-weight="bold" fill="#362FC1" text-anchor="middle" dominant-baseline="middle">01</text>
+            </svg>
+            <div class="casilla-title">Turnos</div>
+          </div>
+
+          <div class="casilla-item" id="casilla8" onclick="abrirCargandoIndefinido()">
+            <svg class="casilla-svg-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="15" r="5" stroke="#362FC1" stroke-width="3" fill="none"/>
+              <path d="M7 33 C7 27 11 25 16 25 C21 25 25 27 25 33" stroke="#362FC1" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="31" cy="18" r="4" stroke="#362FC1" stroke-width="3" fill="none"/>
+              <path d="M24 33 C24 28 27 26.5 31 26.5 C35 26.5 38 28 38 33" stroke="#362FC1" stroke-width="3" stroke-linecap="round" fill="none"/>
+            </svg>
+            <div class="casilla-title">Hijos</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="vistaDocumentos" class="documentos-view">
+        <div class="documentos-header">
+          <div class="doc-header-left">
+            <button class="btn-back" onclick="verInicio()" aria-label="Volver">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <span class="doc-title">DNI Digital</span>
+          </div>
+          <button class="btn-refresh" onclick="location.reload()" aria-label="Actualizar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="documentos-body">
+          <div class="card-doc-accordion open" id="accordionDni">
+            <div class="card-doc-header" onclick="toggleAccordionDni()">
+              <div class="card-doc-left">
+                <div class="icon-wrapper-doc">
+                  <svg width="34" height="24" viewBox="0 0 48 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="44" height="30" rx="4" stroke="#362FC1" stroke-width="3" fill="none"/>
+                    <circle cx="14" cy="14" r="4" stroke="#362FC1" stroke-width="2.5" fill="none"/>
+                    <path d="M8 25 C8 21, 10 20, 14 20 C18 20, 20 21, 20 25" stroke="#362FC1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <line x1="26" y1="13" x2="40" y2="13" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="26" y1="21" x2="36" y2="21" stroke="#362FC1" stroke-width="3" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="doc-name">
+                  Documento Nacional de<br>Identidad (DNI)
+                </div>
+              </div>
+              <div class="chevron-icon">▲</div>
+            </div>
+
+            <div class="card-doc-content">
+              <div class="doc-section">
+                <button class="btn-ver-dni" onclick="abrirPaginaEnBlanco()">Ver DNI digital</button>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-meta-title">Datos suministrados por</div>
+                <div class="doc-meta-value">RENAPER</div>
+              </div>
+
+              <div class="doc-section">
+                <p class="doc-info-text">Recordá que podés solicitar el DNI para vos y para tus hijos y tenerlo disponible en la App.</p>
+                <button class="btn-solicitar-dni" onclick="abrirCargandoIndefinido()">Solicitar DNI Digital</button>
+              </div>
+
+              <div class="doc-action-row" onclick="abrirCargandoIndefinido()">
+                <div class="icon-info-circle">i</div>
+                <div class="action-text">Cambié o voy a cambiar el dispositivo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalPerfil">
+    <div class="modal-content">
+      
+      <div class="form-field">
+        <label>Número DNI</label>
+        <input type="text" id="numDni" placeholder="Ingrese su número de DNI">
+      </div>
+
+      <div class="form-field">
+        <label>Nombre(s)</label>
+        <input type="text" id="nombres" placeholder="Ingrese sus nombres">
+      </div>
+
+      <div class="form-field">
+        <label>Apellido(s)</label>
+        <input type="text" id="apellidos" placeholder="Ingrese sus apellidos">
+      </div>
+
+      <div class="form-field">
+        <label>Lugar de nacimiento</label>
+        <input type="text" id="lugarNacimiento" placeholder="Ej: CIUDAD DE BUENOS AIRES">
+      </div>
+
+      <div class="form-field">
+        <label>Sexo</label>
+        <div class="radio-group">
+          <label><input type="radio" name="sexo" value="M"> M</label>
+          <label><input type="radio" name="sexo" value="F" checked> F</label>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Fecha de nacimiento</label>
+        <input type="date" id="fechaNacimiento">
+      </div>
+
+      <div class="form-field">
+        <label>Fecha de emisión</label>
+        <input type="date" id="fechaEmision">
+      </div>
+
+      <div class="form-field">
+        <label>Fecha de expiración</label>
+        <input type="date" id="fechaExpiracion">
+      </div>
+
+      <div class="form-field">
+        <label>Número de trámite</label>
+        <input type="text" id="numTramite" placeholder="Ingrese su número de trámite">
+      </div>
+
+      <div class="form-field">
+        <label>Ejemplar</label>
+        <input type="text" id="ejemplar" placeholder="Ingrese el ejemplar de su DNI">
+      </div>
+
+      <div class="form-field">
+        <label>Primeros 2 dígitos del CUIL</label>
+        <input type="text" id="cuilInicio" placeholder="Ingrese los primeros 2 dígitos de su CUIL">
+      </div>
+
+      <div class="form-field">
+        <label>Último dígito del CUIL</label>
+        <input type="text" id="cuilFin" placeholder="Ingrese el último dígito de su CUIL">
+      </div>
+
+      <div class="form-field">
+        <label>Dirección</label>
+        <input type="text" id="direccion" placeholder="Ingrese su dirección tal cual aparece en el DNI">
+      </div>
+
+      <div class="form-field">
+        <label>Foto de Perfil</label>
+        <input type="file" id="inputFoto" accept="image/*" onchange="previsualizarImagen(this, 'previewFoto')">
+        <img id="previewFoto" class="img-preview" alt="Foto">
+      </div>
+
+      <div class="form-field">
+        <label>Firma</label>
+        <input type="file" id="inputFirma" accept="image/*" onchange="previsualizarImagen(this, 'previewFirma')">
+        <img id="previewFirma" class="img-preview" alt="Firma">
+      </div>
+
+      <div class="form-field">
+        <label>Código de Barras</label>
+        <input type="file" id="inputFotoBarras" accept="image/*" onchange="previsualizarImagen(this, 'previewFotoBarras')">
+        <img id="previewFotoBarras" class="img-preview" alt="Código de Barras">
+      </div>
+
+      <div class="form-field">
+        <label>Fondo Frente de la Tarjeta DNI</label>
+        <input type="file" id="inputFondoFrente" accept="image/*" onchange="previsualizarImagen(this, 'previewFondoFrente')">
+        <img id="previewFondoFrente" class="img-preview" alt="Fondo Frente">
+      </div>
+
+      <div class="form-field">
+        <label>Fondo Reverso de la Tarjeta DNI</label>
+        <input type="file" id="inputFondoReverso" accept="image/*" onchange="previsualizarImagen(this, 'previewFondoReverso')">
+        <img id="previewFondoReverso" class="img-preview" alt="Fondo Reverso">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="guardarDatosDni()">Guardar Cambios</button>
+        <button class="btn btn-secondary" onclick="cerrarModalPerfil()">Cancelar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VISTA DE CARGA INDEFINIDA -->
+  <div class="vista-loading-full" id="vistaCargando">
+    <div class="loading-header">
+      <button class="btn-back-loading" onclick="cerrarCargandoIndefinido()" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#362FC1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+    </div>
+    <div class="loading-body">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <div class="vista-blanca-full" id="vistaBlanca">
+    <div class="documentos-header">
+      <div class="doc-header-left">
+        <button class="btn-back" onclick="cerrarPaginaEnBlanco()" aria-label="Volver">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="doc-title">DNI Digital</span>
+      </div>
+      <button class="btn-refresh" onclick="actualizarHoraTimestamp()" aria-label="Actualizar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="app-dni-card-wrapper">
+      <div class="app-dni-card-body">
+        
+        <div class="dni-holder-name" id="cardHolderName">-- --</div>
+
+        <div class="dni-container">
+          <div id="dni-card-container">
+            <div id="dni-card">
+              <div id="dni-template-front" class="card__face card__face--front">
+                <img class="dni-item" src="" alt="foto" id="dni-image">
+                <img class="dni-item" src="" alt="firma" id="dni-firma">
+                <canvas class="dni-item" id="dni-qr"></canvas>
+                <a class="dni-item" id="dni-number"></a>
+                <a class="dni-item dni-param" id="dni-surname"></a>
+                <a class="dni-item dni-param" id="dni-name"></a>
+                <a class="dni-item dni-param" id="dni-sex"></a>
+                <a class="dni-item dni-param" id="dni-ejemplar"></a>
+                <a class="dni-item dni-param" id="dni-birth"></a>
+                <a class="dni-item dni-param" id="dni-issue"></a>
+                <a class="dni-item dni-param" id="dni-expiration"></a>
+                <a class="dni-item dni-param" id="dni-tramite-num"></a>
+                <img class="dni-item" src="" alt="codigo-barras" id="dni-extra-image">
+              </div>
+              <div id="dni-template-back" class="card__face card__face--back">
+                <a class="dni-item" id="dni-address"></a>
+                <a class="dni-item" id="dni-birthplace-back"></a>
+                <a class="dni-item" id="dni-mrz"></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="dni-dots">
+            <span class="dni-dot active" id="dotFrente"></span>
+            <span class="dni-dot" id="dotDorso"></span>
+          </div>
+        </div>
+
+        <div class="update-timestamp" id="lastUpdateText">
+          Última actualización --/--/---- --:-- hs
+        </div>
+
+      </div>
+
+      <div class="app-dni-actions">
+        <button class="app-action-btn" onclick="abrirModalPerfil()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c29bc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Ver detalle
+        </button>
+        <button class="app-action-btn danger" onclick="abrirCargandoIndefinido()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c29bc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Desactivar DNI
+        </button>
+      </div>
+
+      <div class="app-dni-qr-accordion">
+        <button class="app-qr-btn" onclick="abrirCargandoIndefinido()">
+          <div class="app-qr-left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c29bc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Verifica código QR</span>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let fotoBase64 = "";
+    let firmaBase64 = "";
+    let fotoBarrasBase64 = "";
+    let fondoFrenteBase64 = "";
+    let fondoReversoBase64 = "";
+
+    document.addEventListener('DOMContentLoaded', cargarDatosGuardados);
+
+    function toggleAccordionDni() {
+      document.getElementById('accordionDni').classList.toggle('open');
+    }
+
+    function verInicio() {
+      document.getElementById('vistaInicio').style.display = 'block';
+      document.getElementById('vistaDocumentos').style.display = 'none';
+      document.getElementById('linkInicio').classList.add('active');
+      document.getElementById('linkDocumentos').classList.remove('active');
+      if (window.innerWidth <= 768) cerrarMenuMovil();
+    }
+
+    function verDocumentos() {
+      document.getElementById('vistaInicio').style.display = 'none';
+      document.getElementById('vistaDocumentos').style.display = 'flex';
+      document.getElementById('linkInicio').classList.remove('active');
+      document.getElementById('linkDocumentos').classList.add('active');
+      if (window.innerWidth <= 768) cerrarMenuMovil();
+    }
+
+    function abrirModalPerfil() {
+      document.getElementById('modalPerfil').classList.add('show');
+      if (window.innerWidth <= 768) cerrarMenuMovil();
+    }
+
+    function cerrarModalPerfil() {
+      document.getElementById('modalPerfil').classList.remove('show');
+    }
+
+    /* CARGANDO INDEFINIDO */
+    function abrirCargandoIndefinido() {
+      document.getElementById('vistaCargando').style.display = 'flex';
+      if (window.innerWidth <= 768) cerrarMenuMovil();
+    }
+
+    function cerrarCargandoIndefinido() {
+      document.getElementById('vistaCargando').style.display = 'none';
+    }
+
+    /* FLIP CARD CON SOPORTE OPTIMIZADO PARA WEBKIT/IOS */
+    let isFliped = false;
+    let flipListenerAdded = false;
+
+    function initDniFlip() {
+  const dniCard = document.getElementById('dni-card');
+  if (!dniCard || flipListenerAdded) return;
+
+  let startX = 0;
+  let startY = 0;
+  let isDragging = false;
+
+  // Inicio de toque
+  dniCard.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isDragging = false;
+  }, { passive: true });
+
+  // Detección de arrastre durante el movimiento del dedo
+  dniCard.addEventListener('touchmove', function(e) {
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = Math.abs(currentX - startX);
+    const diffY = Math.abs(currentY - startY);
+
+    // Si se desplaza más de 10px horizontalmente, se considera un arrastre
+    if (diffX > 10 && diffX > diffY) {
+      isDragging = true;
+    }
+  }, { passive: true });
+
+  // Fin de toque
+  dniCard.addEventListener('touchend', function(e) {
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const diffX = endX - startX;
+    const diffY = Math.abs(endY - startY);
+
+    // 1. Si hubo un gesto de arrastre horizontal suficiente (Swipe)
+    if (Math.abs(diffX) > 30 && diffY < 50) {
+      e.preventDefault();
+      flipCard();
+      return;
+    }
+
+    // 2. Si fue un toque rápido/presionado directo (Tap/Click)
+    if (!isDragging && Math.abs(diffX) < 0 && diffY < 0) {
+      e.preventDefault();
+      flipCard();
+    }
+  });
+
+  // Evento para escritorio / clic con mouse
+  dniCard.addEventListener('click', function(e) {
+    if (e.pointerType === 'mouse') {
+      flipCard();
+    }
+  });
+
+  flipListenerAdded = true;
+}
+
+
+    function flipCard() {
+      const dniCard = document.getElementById('dni-card');
+
+      if (isFliped) {
+        dniCard.classList.remove('is-flipped');
+        isFliped = false;
+        document.getElementById('dotFrente').classList.add('active');
+        document.getElementById('dotDorso').classList.remove('active');
+      } else {
+        dniCard.classList.add('is-flipped');
+        isFliped = true;
+        document.getElementById('dotFrente').classList.remove('active');
+        document.getElementById('dotDorso').classList.add('active');
+      }
+    }
+
+    function abrirPaginaEnBlanco() {
+      isFliped = false;
+      const dniCard = document.getElementById('dni-card');
+      if (dniCard) {
+        dniCard.classList.remove('is-flipped');
+      }
+      document.getElementById('dotFrente').classList.add('active');
+      document.getElementById('dotDorso').classList.remove('active');
+      document.getElementById('vistaBlanca').style.display = 'block';
+      inyectarDatosDNI();
+      actualizarHoraTimestamp();
+      setTimeout(initDniFlip, 50);
+    }
+
+    function cerrarPaginaEnBlanco() {
+      document.getElementById('vistaBlanca').style.display = 'none';
+    }
+
+    function actualizarHoraTimestamp() {
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      
+      const tsText = `Última actualización ${dd}/${mm}/${yyyy} ${hh}:${min} hs`;
+      const el = document.getElementById('lastUpdateText');
+      if (el) el.innerText = tsText;
+    }
+
+    const MESES_DNI = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+    function formatFechaDNI(iso) {
+      if (!iso) return '\u2014';
+      const [y, m, d] = iso.split('-');
+      if (!y || !m || !d) return iso;
+      const mes = MESES_DNI[parseInt(m,10)-1] || m;
+      return `${d} ${mes}/ ${mes} ${y}`;
+    }
+
+    function formatDni(num) {
+      if (!num) return '\u2014';
+      const n = num.replace(/\D/g, '');
+      return n.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+    }
+
+    function inyectarDatosDNI() {
+      const datos = JSON.parse(localStorage.getItem('datosDNI_Config')) || {};
+
+      const nombreCompleto = `${datos.nombres || ''} ${datos.apellidos || ''}`.trim();
+      document.getElementById('cardHolderName').innerText = nombreCompleto || 'Nombre Apellido';
+
+      document.getElementById('dni-surname').innerText = (datos.apellidos || '').toUpperCase() || 'NULL';
+      document.getElementById('dni-name').innerText = (datos.nombres || '').toUpperCase() || 'NULL';
+      document.getElementById('dni-sex').innerText = datos.sexo || 'F';
+      document.getElementById('dni-birth').innerText = formatFechaDNI(datos.fechaNacimiento);
+      document.getElementById('dni-issue').innerText = formatFechaDNI(datos.fechaEmision);
+      document.getElementById('dni-expiration').innerText = formatFechaDNI(datos.fechaExpiracion);
+      document.getElementById('dni-tramite-num').innerText = datos.numTramite || 'null';
+      document.getElementById('dni-ejemplar').innerText = (datos.ejemplar || 'A').toUpperCase();
+      document.getElementById('dni-number').innerText = formatDni(datos.numDni);
+
+      const imgEl = document.getElementById('dni-image');
+      imgEl.src = datos.foto || '';
+      imgEl.style.display = datos.foto ? 'block' : 'none';
+
+      const imgExtraEl = document.getElementById('dni-extra-image');
+      if (imgExtraEl) {
+        imgExtraEl.src = datos.fotoBarras || '';
+        imgExtraEl.style.display = datos.fotoBarras ? 'block' : 'none';
+      }
+
+      const firmaEl = document.getElementById('dni-firma');
+      firmaEl.src = datos.firma || '';
+      firmaEl.style.display = datos.firma ? 'block' : 'none';
+
+      const frontCard = document.getElementById('dni-template-front');
+      const backCard = document.getElementById('dni-template-back');
+
+      if (datos.fondoFrente) {
+        frontCard.style.backgroundImage = `url('${datos.fondoFrente}')`;
+      } else {
+        frontCard.style.backgroundImage = "url('dni-template.png')";
+      }
+
+      if (datos.fondoReverso) {
+        backCard.style.backgroundImage = `url('${datos.fondoReverso}')`;
+      } else {
+        backCard.style.backgroundImage = "url('dni-template-back.png')";
+      }
+
+      const addr = (datos.direccion || '').toUpperCase() || 'NULL';
+      document.getElementById('dni-address').innerHTML =
+        '<font style="font-size: calc(7px * var(--dni-size-multiplier)); font-weight: 500; letter-spacing: 0;">DOMICILIO</font> ' + addr;
+
+      let lugarNac = (datos.lugarNacimiento || '').toUpperCase();
+      if (lugarNac) {
+        if (!lugarNac.includes("ARGENTINA")) {
+          lugarNac += " ARGENTINA";
+        }
+      } else {
+        lugarNac = "ARGENTINA";
+      }
+
+      document.getElementById('dni-birthplace-back').innerText = lugarNac;
+
+      const ape = (datos.apellidos || 'APELLIDO').toUpperCase().replace(/ /g,'<').padEnd(15,'<').substring(0,15);
+      const nom = (datos.nombres || 'NOMBRE').toUpperCase().replace(/ /g,'<').padEnd(10,'<').substring(0,10);
+      const dniN = (datos.numDni || '').replace(/\D/g,'').padEnd(8,'<').substring(0,8);
+      const nac = datos.fechaNacimiento ? datos.fechaNacimiento.replace(/-/g,'').substring(2) : '000000';
+      const exp = datos.fechaExpiracion ? datos.fechaExpiracion.replace(/-/g,'').substring(2) : '000000';
+      const sx = datos.sexo || 'F';
+      const mrz1 = ('IDARG' + dniN + '<4<<<<<<<<<<<<<<<').substring(0,30);
+      const mrz2 = (nac + sx + exp + 'ARG<<<<<<<<<FI<<0').substring(0,30);
+      const mrz3 = (ape + '<<' + nom + '<<<<<<<<<<<<<<<').substring(0,30);
+      document.getElementById('dni-mrz').innerText = mrz1 + '\n' + mrz2 + '\n' + mrz3;
+    }
+
+    function previsualizarImagen(input, previewId) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const previewImg = document.getElementById(previewId);
+          previewImg.src = e.target.result;
+          previewImg.style.display = 'block';
+          if (previewId === 'previewFoto')          fotoBase64         = e.target.result;
+          if (previewId === 'previewFirma')         firmaBase64        = e.target.result;
+          if (previewId === 'previewFotoBarras')    fotoBarrasBase64   = e.target.result;
+          if (previewId === 'previewFondoFrente')  fondoFrenteBase64  = e.target.result;
+          if (previewId === 'previewFondoReverso') fondoReversoBase64 = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function guardarDatosDni() {
+      const datos = {
+        numDni: document.getElementById('numDni').value,
+        nombres: document.getElementById('nombres').value,
+        apellidos: document.getElementById('apellidos').value,
+        lugarNacimiento: document.getElementById('lugarNacimiento').value,
+        sexo: document.querySelector('input[name="sexo"]:checked')?.value || 'F',
+        fechaNacimiento: document.getElementById('fechaNacimiento').value,
+        fechaEmision: document.getElementById('fechaEmision').value,
+        fechaExpiracion: document.getElementById('fechaExpiracion').value,
+        numTramite: document.getElementById('numTramite').value,
+        ejemplar: document.getElementById('ejemplar').value,
+        cuilInicio: document.getElementById('cuilInicio').value,
+        cuilFin: document.getElementById('cuilFin').value,
+        direccion: document.getElementById('direccion').value,
+        foto: fotoBase64,
+        firma: firmaBase64,
+        fotoBarras: fotoBarrasBase64,
+        fondoFrente: fondoFrenteBase64,
+        fondoReverso: fondoReversoBase64
+      };
+      localStorage.setItem('datosDNI_Config', JSON.stringify(datos));
+      actualizarNombresPantalla(datos.nombres, datos.apellidos);
+      alert('\u00a1Datos guardados con \u00e9xito!');
+      cerrarModalPerfil();
+    }
+
+    function cargarDatosGuardados() {
+      const datos = JSON.parse(localStorage.getItem('datosDNI_Config'));
+      if (datos) {
+        document.getElementById('numDni').value = datos.numDni || '';
+        document.getElementById('nombres').value = datos.nombres || '';
+        document.getElementById('apellidos').value = datos.apellidos || '';
+        document.getElementById('lugarNacimiento').value = datos.lugarNacimiento || '';
+        if (datos.sexo) {
+          const r = document.querySelector(`input[name="sexo"][value="${datos.sexo}"]`);
+          if (r) r.checked = true;
+        }
+        document.getElementById('fechaNacimiento').value = datos.fechaNacimiento || '';
+        document.getElementById('fechaEmision').value = datos.fechaEmision || '';
+        document.getElementById('fechaExpiracion').value = datos.fechaExpiracion || '';
+        document.getElementById('numTramite').value = datos.numTramite || '';
+        document.getElementById('ejemplar').value = datos.ejemplar || '';
+        document.getElementById('cuilInicio').value = datos.cuilInicio || '';
+        document.getElementById('cuilFin').value = datos.cuilFin || '';
+        document.getElementById('direccion').value = datos.direccion || '';
+        
+        if (datos.foto) {
+          fotoBase64 = datos.foto;
+          const p = document.getElementById('previewFoto');
+          p.src = datos.foto; p.style.display = 'block';
+        }
+        if (datos.firma) {
+          firmaBase64 = datos.firma;
+          const p = document.getElementById('previewFirma');
+          p.src = datos.firma; p.style.display = 'block';
+        }
+        if (datos.fotoBarras) {
+          fotoBarrasBase64 = datos.fotoBarras;
+          const p = document.getElementById('previewFotoBarras');
+          p.src = datos.fotoBarras; p.style.display = 'block';
+        }
+        if (datos.fondoFrente) {
+          fondoFrenteBase64 = datos.fondoFrente;
+          const p = document.getElementById('previewFondoFrente');
+          p.src = datos.fondoFrente; p.style.display = 'block';
+        }
+        if (datos.fondoReverso) {
+          fondoReversoBase64 = datos.fondoReverso;
+          const p = document.getElementById('previewFondoReverso');
+          p.src = datos.fondoReverso; p.style.display = 'block';
+        }
+
+        actualizarNombresPantalla(datos.nombres, datos.apellidos);
+      } else {
+        actualizarNombresPantalla('', '');
+      }
+    }
+
+    function actualizarNombresPantalla(nombres, apellidos) {
+      const n = `${nombres || ''} ${apellidos || ''}`.trim();
+      document.getElementById('welcomeUser').innerText = n ? `\u00a1Hola, ${n}!` : '\u00a1Hola!';
+      document.getElementById('topNavUser').innerText = n ? `${n} \u25be` : 'Mi Perfil \u25be';
+      document.getElementById('topNavUserMobile').innerText = n ? `\u00a1Hola, ${n}!` : '\u00a1Hola!';
+    }
+
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    }
+
+    function cerrarMenuMovil() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+  </script>
+</body>
+</html>
+
