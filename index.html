@@ -1661,10 +1661,16 @@
         backCard.style.backgroundImage = "url('dni-template-back.png')";
       }
 
-      const addr = (datos.direccion || '').toUpperCase() || 'NULL';
-      document.getElementById('dni-address').innerHTML =
-        '<font style="font-size: calc(10.5px * var(--dni-size-multiplier)); left: 18px;top: 100px; font-weight: 500; letter-spacing: 0;">DOMICILIO: </font> ' + addr;
+  // Tu código JS queda limpio:
+    const addr = (datos.direccion || '').toUpperCase() || 'NULL';
+    document.getElementById('dni-address').innerHTML =
+      '<font style="font-size: calc(10.5px * var(--dni-size-multiplier)); font-weight: 500; letter-spacing: 0;">DOMICILIO: </font>' + addr;
 
+    // Y ajustas la posición desde JS (o directamente en tu archivo CSS):
+    const el = document.getElementById('dni-address');
+    el.style.position = 'absolute'; // o 'relative'
+    el.style.top = '26px';         // Ajusta según tu diseño
+    el.style.left = '9px';        // Ajusta según tu diseño
       let lugarNac = (datos.lugarNacimiento || '').toUpperCase();
       if (lugarNac) {
         if (!lugarNac.includes("ARGENTINA")) {
@@ -1676,16 +1682,6 @@
 
       document.getElementById('dni-birthplace-back').innerText = lugarNac;
 
-      const ape = (datos.apellidos || 'APELLIDO').toUpperCase().replace(/ /g,'<').padEnd(15,'<').substring(0,15);
-      const nom = (datos.nombres || 'NOMBRE').toUpperCase().replace(/ /g,'<').padEnd(10,'<').substring(0,10);
-      const dniN = (datos.numDni || '').replace(/\D/g,'').padEnd(8,'<').substring(0,8);
-      const nac = datos.fechaNacimiento ? datos.fechaNacimiento.replace(/-/g,'').substring(2) : '000000';
-      const exp = datos.fechaExpiracion ? datos.fechaExpiracion.replace(/-/g,'').substring(2) : '000000';
-      const sx = datos.sexo || 'F';
-      const mrz1 = ('IDARG' + dniN + '<4<<<<<<<<<<<<<<<').substring(0,30);
-      const mrz2 = (nac + sx + exp + 'ARG<<<<<<<<<FI<<0').substring(0,30);
-      const mrz3 = (ape + '<<' + nom + '<<<<<<<<<<<<<<<').substring(0,30);
-      document.getElementById('dni-mrz').innerText = mrz1 + '\n' + mrz2 + '\n' + mrz3;
     }
 
     function previsualizarImagen(input, previewId) {
