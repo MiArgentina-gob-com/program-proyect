@@ -788,35 +788,35 @@
     }
 
     #dni-surname {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
-      top: calc(54px * var(--dni-size-multiplier));
+      top: calc(48px * var(--dni-size-multiplier));
     }
 
     #dni-name {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
-      top: calc(77px * var(--dni-size-multiplier));
+      top: calc(75px * var(--dni-size-multiplier));
     }
 
     #dni-sex {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
-      top: calc(104px * var(--dni-size-multiplier));
+      top: calc(100px * var(--dni-size-multiplier));
     }
 
     #dni-ejemplar {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(11px * var(--dni-size-multiplier));
       position: absolute;
-      right: calc(40px * var(--dni-size-multiplier));
+      right: calc(55px * var(--dni-size-multiplier));
       top: calc(104px * var(--dni-size-multiplier));
     }
 
     #dni-birth {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
       top: calc(130px * var(--dni-size-multiplier));
@@ -824,7 +824,7 @@
     }
 
     #dni-issue {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
       top: calc(157px * var(--dni-size-multiplier));
@@ -832,7 +832,7 @@
     }
 
     #dni-expiration {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
       top: calc(183px * var(--dni-size-multiplier));
@@ -840,21 +840,23 @@
     }
 
     #dni-tramite-num {
-      font-size: calc(9.5px * var(--dni-size-multiplier));
+      font-size: calc(12px * var(--dni-size-multiplier));
       position: absolute;
       left: calc(130px * var(--dni-size-multiplier));
       top: calc(208px * var(--dni-size-multiplier));
-      max-width: calc(100px * var(--dni-size-multiplier));
+      max-width: calc(9ch);
+      word-break: break-all;     /* Fuerza el salto de línea al llegar al límite */
+     font-family: monospace;    /* Asegura un ancho uniforme por carácter */
       overflow: visible;
       word-wrap: break-word;
       letter-spacing: 0.5px;
     }
 
     #dni-number {
-      font-size: calc(18px * var(--dni-size-multiplier));
+      font-size: calc(19px * var(--dni-size-multiplier));
       position: absolute;
-      left: calc(15px * var(--dni-size-multiplier));
-      bottom: calc(15px * var(--dni-size-multiplier));
+      left: calc(13px * var(--dni-size-multiplier));
+      bottom: calc(25px * var(--dni-size-multiplier));
       font-weight: 600;
       letter-spacing: -0.5px;
     }
