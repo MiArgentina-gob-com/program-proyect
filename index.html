@@ -484,7 +484,7 @@
       border: none;
       border-bottom: 1.5px solid #4a90e2;
       padding: 6px 0;
-      font-size: 16px; /* Evita auto-zoom en iOS */
+      font-size: 16px;
       outline: none;
       background: transparent;
       border-radius: 0;
@@ -712,7 +712,6 @@
       height: 100%;
       border-radius: 8px;
       position: relative;
-      /* Transición explícita con el prefijo WebKit */
       transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
       -webkit-transition: -webkit-transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
       transform-style: preserve-3d;
@@ -734,7 +733,6 @@
       background-position: center;
       background-repeat: no-repeat;
       background-size: 100% 100%;
-      /* Fix clave para WebKit: translateZ independiente para cada cara */
       -webkit-transform-style: preserve-3d;
       transform-style: preserve-3d;
     }
@@ -751,7 +749,6 @@
       background-image: url('dni-template-back.png');
     }
 
-    /* Forzar la rotación por GPU en el contenedor padre */
     #dni-card.is-flipped {
       transform: rotateY(180deg);
       -webkit-transform: rotateY(180deg);
@@ -845,8 +842,8 @@
       left: calc(130px * var(--dni-size-multiplier));
       top: calc(204px * var(--dni-size-multiplier));
       max-width: calc(9ch);
-      word-break: break-all;     /* Fuerza el salto de línea al llegar al límite */
-     font-family: monospace;    /* Asegura un ancho uniforme por carácter */
+      word-break: break-all;
+      font-family: monospace;
       overflow: visible;
       word-wrap: break-word;
       letter-spacing: 0.5px;
@@ -1241,6 +1238,11 @@
       </div>
 
       <div class="form-field">
+        <label>Lugar de nacimiento</label>
+        <input type="text" id="lugarNacimiento" placeholder="Ingrese su lugar de nacimiento">
+      </div>
+
+      <div class="form-field">
         <label>Sexo</label>
         <div class="radio-group">
           <label><input type="radio" name="sexo" value="M"> M</label>
@@ -1403,7 +1405,8 @@
       </div>
 
       <div class="app-dni-actions">
-        <button class="app-action-btn" onclick="abrirModalPerfil()">
+        <!-- BOTÓN ACTUALIZADO PARA QUE NO HAGA NADA AL PRESIONARLO -->
+        <button class="app-action-btn" onclick="event.preventDefault();">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c29bc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
@@ -1498,48 +1501,41 @@
       let startY = 0;
       let isDragging = false;
 
-      // Inicio de toque
       dniCard.addEventListener('touchstart', function(e) {
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         isDragging = false;
       }, { passive: true });
 
-      // Detección de arrastre durante el movimiento del dedo
       dniCard.addEventListener('touchmove', function(e) {
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const diffX = Math.abs(currentX - startX);
         const diffY = Math.abs(currentY - startY);
 
-        // Si se desplaza más de 10px, se considera un arrastre
         if (diffX > 10 || diffY > 10) {
           isDragging = true;
         }
       }, { passive: true });
 
-      // Fin de toque
       dniCard.addEventListener('touchend', function(e) {
         const endX = e.changedTouches[0].clientX;
         const endY = e.changedTouches[0].clientY;
         const diffX = endX - startX;
         const diffY = Math.abs(endY - startY);
 
-        // 1. Si hubo un gesto de arrastre horizontal suficiente (Swipe)
         if (Math.abs(diffX) > 30 && diffY < 50) {
           e.preventDefault();
           flipCard();
           return;
         }
 
-        // 2. Si fue un toque rápido/presionado directo (Tap)
         if (!isDragging && Math.abs(diffX) < 10 && diffY < 10) {
           e.preventDefault();
           flipCard();
         }
       });
 
-      // Evento para escritorio / clic con mouse
       dniCard.addEventListener('click', function(e) {
         if (e.pointerType === 'mouse') {
           flipCard();
@@ -1656,16 +1652,14 @@
         backCard.style.backgroundImage = "url('dni-template-back.png')";
       }
 
-  // Tu código JS queda limpio:
-    const addr = (datos.direccion || '').toUpperCase() || 'NULL';
-    document.getElementById('dni-address').innerHTML =
-      '<font style="font-size: calc(10.5px * var(--dni-size-multiplier)); font-weight: 500; letter-spacing: 0;">DOMICILIO: </font>' + addr;
+      const addr = (datos.direccion || '').toUpperCase() || 'NULL';
+      document.getElementById('dni-address').innerHTML =
+        '<font style="font-size: calc(10.5px * var(--dni-size-multiplier)); font-weight: 500; letter-spacing: 0;">DOMICILIO: </font>' + addr;
 
-    // Y ajustas la posición desde JS (o directamente en tu archivo CSS):
-    const el = document.getElementById('dni-address');
-    el.style.position = 'absolute'; // o 'relative'
-    el.style.top = '26px';         // Ajusta según tu diseño
-    el.style.left = '9px';        // Ajusta según tu diseño
+      const el = document.getElementById('dni-address');
+      el.style.position = 'absolute';
+      el.style.top = '26px';
+      el.style.left = '9px';
       let lugarNac = (datos.lugarNacimiento || '').toUpperCase();
       if (lugarNac) {
         if (!lugarNac.includes("ARGENTINA")) {
@@ -1676,7 +1670,6 @@
       }
 
       document.getElementById('dni-birthplace-back').innerText = lugarNac;
-
     }
 
     function previsualizarImagen(input, previewId) {
@@ -1702,7 +1695,7 @@
         numDni: document.getElementById('numDni').value,
         nombres: document.getElementById('nombres').value,
         apellidos: document.getElementById('apellidos').value,
-        lugarNacimiento: document.getElementById('lugarNacimiento').value,
+        lugarNacimiento: document.getElementById('lugarNacimiento')?.value || '',
         sexo: document.querySelector('input[name="sexo"]:checked')?.value || 'F',
         fechaNacimiento: document.getElementById('fechaNacimiento').value,
         fechaEmision: document.getElementById('fechaEmision').value,
@@ -1720,6 +1713,7 @@
       };
       localStorage.setItem('datosDNI_Config', JSON.stringify(datos));
       actualizarNombresPantalla(datos.nombres, datos.apellidos);
+      inyectarDatosDNI();
       alert('\u00a1Datos guardados con \u00e9xito!');
       cerrarModalPerfil();
     }
@@ -1730,7 +1724,9 @@
         document.getElementById('numDni').value = datos.numDni || '';
         document.getElementById('nombres').value = datos.nombres || '';
         document.getElementById('apellidos').value = datos.apellidos || '';
-        document.getElementById('lugarNacimiento').value = datos.lugarNacimiento || '';
+        if (document.getElementById('lugarNacimiento')) {
+          document.getElementById('lugarNacimiento').value = datos.lugarNacimiento || '';
+        }
         if (datos.sexo) {
           const r = document.querySelector(`input[name="sexo"][value="${datos.sexo}"]`);
           if (r) r.checked = true;
